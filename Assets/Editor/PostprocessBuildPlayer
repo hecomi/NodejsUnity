@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+
+my $installPath = $ARGV[0];
+my $node_dir    = "Assets/StreamingAssets/.node";
+my $target_dir  = "$installPath/Contents/Data/StreamingAssets/.";
+
+system "cp -r $node_dir $target_dir";

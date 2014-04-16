@@ -1,0 +1,13 @@
+{
+  "name": "NodeUnitySample",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "hecomi",
+    "email": "info@hecomi.com"
+  },
+  "dependencies": {
+	"socket.io": "*",
+	"node-osc": "*"
+  }
+}
