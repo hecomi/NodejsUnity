@@ -4,8 +4,8 @@
 		<style>
 			body { background: #000; color: #fff; font-weight: bold }
 		</style>
-		<script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="//127.0.0.1:8080/socket.io/socket.io.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script>
 			$(function() {
 				var socket = io.connect('http://127.0.0.1:8080');
@@ -16,7 +16,7 @@
 					var y = data.clientY / $window.height();
 					$x.html( x.toFixed(3) );
 					$y.html( y.toFixed(3) );
-					socket.emit('move', { x: x - 0.5, y: 0.5 - y });
+					socket.emit('browser/move', { x: x - 0.5, y: 0.5 - y });
 				});
 			});
 		</script>

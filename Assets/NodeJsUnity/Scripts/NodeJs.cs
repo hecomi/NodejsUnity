@@ -6,27 +6,27 @@ public class NodeJs : MonoBehaviour
 {
 	#region [ static members ]
 	#if UNITY_STANDALONE_WIN
-    private static readonly string NodeBinPath = "node.exe";
+	private static readonly string NodeBinPath = "node.exe";
 	#endif
 	#if UNITY_STANDALONE_OSX
-    private static readonly string NodeBinPath = "node";
+	private static readonly string NodeBinPath = "node";
 	#endif
-    private static readonly string NodeScriptPath = ".node/";
+	private static readonly string NodeScriptPath = ".node/";
 	private static string NodeBinFullPath;
 	private static string NodeScriptFullPath;
 	private static bool IsInitialized = false;
 	#endregion
 
 	#region [ member variables ]
-    public string scriptPath = "";
-    private System.Diagnostics.Process process_ = null;
+	public string scriptPath = "";
+	private System.Diagnostics.Process process_ = null;
 	private List<string> logs_ = new List<string>();
 	public int logLength = 10;
 	public string log = "";
 	#endregion
 
 	#region [ getter / setter ]
-    public bool isRunning { get; set; }
+	public bool isRunning { get; set; }
 	#endregion
 
 	#region [ member functions ]
@@ -39,43 +39,46 @@ public class NodeJs : MonoBehaviour
 		}
 	}
 
-    void Awake()
-    {
-        isRunning = false;
+	void Awake()
+	{
+		isRunning = false;
 		SetFullPath();
-        Run();
-    }
+		Run();
+	}
 
-    void OnApplicationQuit()
-    {
-        if (process_ != null && !process_.HasExited) {
-            process_.Kill();
-            process_.Dispose();
-        }
-    }
+	void OnApplicationQuit()
+	{
+		if (process_ != null && !process_.HasExited) {
+			process_.Kill();
+			process_.Dispose();
+		}
+	}
 
-    void Run()
-    {
+	void Run()
+	{
 		if (isRunning) {
 			Debug.LogError("Already Running: " + scriptPath);
 			return;
 		}
 
-        process_ = new System.Diagnostics.Process();
-        process_.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-        process_.StartInfo.FileName = NodeBinFullPath;
-        process_.StartInfo.Arguments = NodeScriptFullPath + scriptPath;
+		process_ = new System.Diagnostics.Process();
+		process_.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+		process_.StartInfo.FileName = NodeBinFullPath;
+		process_.StartInfo.Arguments = NodeScriptFullPath + scriptPath;
 		process_.StartInfo.CreateNoWindow = true;
 		process_.StartInfo.RedirectStandardOutput = true;
+		process_.StartInfo.RedirectStandardError = true;
 		process_.StartInfo.UseShellExecute = false;
 		process_.StartInfo.WorkingDirectory = NodeScriptFullPath;
 		process_.OutputDataReceived += OnOutputData;
-        process_.EnableRaisingEvents = true;
-        process_.Exited += OnExit;
-        process_.Start();
+		process_.ErrorDataReceived += OnOutputData;
+		process_.EnableRaisingEvents = true;
+		process_.Exited += OnExit;
+		process_.Start();
 		process_.BeginOutputReadLine();
-        isRunning = true;
-    }
+		process_.BeginErrorReadLine();
+		isRunning = true;
+	}
 
 	void Stop()
 	{
@@ -96,12 +99,12 @@ public class NodeJs : MonoBehaviour
 		logs_.ForEach(line => { log += line + "\n"; });
 	}
 
-    void OnExit(object sender, System.EventArgs e)
-    {
-        isRunning = false;
-        if (process_.ExitCode != 0) {
-            Debug.LogError("Error! Exit Code: " + process_.ExitCode);
-        }
-    }
+	void OnExit(object sender, System.EventArgs e)
+	{
+		isRunning = false;
+		if (process_.ExitCode != 0) {
+			Debug.LogError("Error! Exit Code: " + process_.ExitCode);
+		}
+	}
 	#endregion
 }

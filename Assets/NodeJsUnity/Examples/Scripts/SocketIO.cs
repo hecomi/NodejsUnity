@@ -6,33 +6,39 @@ using SocketIOClient;
 using SimpleJSON;
 using EventItem = System.Collections.Generic.KeyValuePair<string, SimpleJSON.JSONNode>;
 
-public class SocketIoClient : MonoBehaviour
+public class SocketIO : MonoBehaviour
 {
 	public string serverUrl = "http://127.0.0.1:8080";
 	public List<GameObject> sendTargets;
 
 	private Client client_;
+	public Client client {
+		get { return client_; }
+	}
 	private Queue<EventItem> eventQueue_ = new Queue<EventItem>();
 
-	void Start()
+	void Awake()
 	{
 		client_ = new Client(serverUrl);
 
 		client_.Opened  += SocketOpened;
 		client_.Message += SocketMessage;
-		client_.SocketConnectionClosed += SocketConnectionClosed;
 		client_.Error   += SocketError;
+		client_.SocketConnectionClosed += SocketConnectionClosed;
 
 		client_.Connect();
 	}
 
 	void Update()
 	{
+		if (!client_.IsConnected) {
+			client_.Connect();
+		}
 		while (eventQueue_.Count > 0) {
 			var item = eventQueue_.Dequeue();
 			sendTargets.ForEach(target => {
-					target.SendMessage("OnWebsocketMessage", item, SendMessageOptions.DontRequireReceiver);
-					});
+				target.SendMessage("OnWebsocketMessage", item, SendMessageOptions.DontRequireReceiver);
+			});
 		}
 	}
 
