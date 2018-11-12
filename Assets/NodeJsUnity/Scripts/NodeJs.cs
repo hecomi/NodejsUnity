@@ -46,7 +46,7 @@ public class NodeJs : MonoBehaviour
 		Run();
 	}
 
-	void OnApplicationQuit()
+	void OnDestroy()
 	{
 		if (process_ != null && !process_.HasExited) {
 			process_.Kill();
